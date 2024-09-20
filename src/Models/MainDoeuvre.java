@@ -1,10 +1,10 @@
 package Models;
 
 public class MainDoeuvre {
-    private int id ;
-    private double tauxHoraire ;
-    private double heuresTravail ;
-    private double productiviteOuvrier ;
+    private int id;
+    private double tauxHoraire;
+    private double heuresTravail;
+    private double productiviteOuvrier;
 
     public int getId() {
         return id;
@@ -19,6 +19,9 @@ public class MainDoeuvre {
     }
 
     public void setTauxHoraire(double tauxHoraire) {
+        if(tauxHoraire < 0) {
+            throw new IllegalArgumentException("Le taux horaire ne peut pas être négatif.");
+        }
         this.tauxHoraire = tauxHoraire;
     }
 
@@ -27,6 +30,9 @@ public class MainDoeuvre {
     }
 
     public void setHeuresTravail(double heuresTravail) {
+        if(heuresTravail < 0) {
+            throw new IllegalArgumentException("Le nombre d'heures travaillées ne peut pas être négatif.");
+        }
         this.heuresTravail = heuresTravail;
     }
 
@@ -35,12 +41,15 @@ public class MainDoeuvre {
     }
 
     public void setProductiviteOuvrier(double productiviteOuvrier) {
+        if(productiviteOuvrier <= 0) {
+            throw new IllegalArgumentException("La productivité doit être supérieure à zéro.");
+        }
         this.productiviteOuvrier = productiviteOuvrier;
     }
 
     @Override
     public String toString() {
-        return "\nMainDoeuvre{" +
+        return "MainDoeuvre{" +
                 "id=" + id +
                 ", tauxHoraire=" + tauxHoraire +
                 ", heuresTravail=" + heuresTravail +
