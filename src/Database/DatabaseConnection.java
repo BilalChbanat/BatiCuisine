@@ -13,18 +13,20 @@ public class DatabaseConnection {
     private static final String USER = "admin";
     private static final String PASSWORD = "admin";
 
-    private DatabaseConnection() throws SQLException {
+    private DatabaseConnection() {
         try {
-            connection = DriverManager.getConnection(URL, USER, PASSWORD);
-        } catch (SQLException e) {
-            throw new SQLException("Failed to create the database connection.", e);
+            Class.forName("org.postgresql.Driver");
+
+            this.connection = DriverManager.getConnection(URL, USER, PASSWORD);
+
+        } catch (ClassNotFoundException | SQLException e) {
+            System.out.println("Error during database connection initialization: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    public static DatabaseConnection getInstance() throws SQLException {
+    public static synchronized DatabaseConnection getInstance() {
         if (instance == null) {
-            instance = new DatabaseConnection();
-        } else if (instance.getConnection().isClosed()) {
             instance = new DatabaseConnection();
         }
         return instance;
@@ -32,5 +34,16 @@ public class DatabaseConnection {
 
     public Connection getConnection() {
         return connection;
+    }
+
+    public void closeConnection() {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                System.out.println("Error closing the connection: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
     }
 }
