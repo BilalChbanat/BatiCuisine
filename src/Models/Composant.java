@@ -6,7 +6,6 @@ public class Composant {
     private String typeComposant;
     private double tauxTVA;
 
-
     public Composant(int id, String name, String typeComposant, double tauxTVA) {
         this.id = id;
         this.name = name;
@@ -48,7 +47,7 @@ public class Composant {
 
     @Override
     public String toString() {
-        return "\n Composant{" +
+        return "Composant{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", typeComposant='" + typeComposant + '\'' +
