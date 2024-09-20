@@ -5,14 +5,14 @@ import java.time.LocalDate;
 public class Devis {
 
     private int id;
-    private double montantEstime ;
-    private LocalDate datevalidite ;
+    private double montantEstime;
+    private LocalDate dateValidite;
     private boolean accepte;
 
-    public Devis(int id, double montantEstime, LocalDate datevalidite, boolean accepte) {
+    public Devis(int id, double montantEstime, LocalDate dateValidite, boolean accepte) {
         this.id = id;
         this.montantEstime = montantEstime;
-        this.datevalidite = datevalidite;
+        this.dateValidite = dateValidite;
         this.accepte = accepte;
     }
 
@@ -29,15 +29,18 @@ public class Devis {
     }
 
     public void setMontantEstime(double montantEstime) {
+        if(montantEstime < 0) {
+            throw new IllegalArgumentException("Montant estimé ne peut pas être négatif.");
+        }
         this.montantEstime = montantEstime;
     }
 
-    public LocalDate getDatevalidite() {
-        return datevalidite;
+    public LocalDate getDateValidite() {
+        return dateValidite;
     }
 
-    public void setDatevalidite(LocalDate datevalidite) {
-        this.datevalidite = datevalidite;
+    public void setDateValidite(LocalDate dateValidite) {
+        this.dateValidite = dateValidite;
     }
 
     public boolean isAccepte() {
@@ -50,10 +53,10 @@ public class Devis {
 
     @Override
     public String toString() {
-        return "\nDevis{" +
+        return "Devis{" +
                 "id=" + id +
                 ", montantEstime=" + montantEstime +
-                ", datevalidite=" + datevalidite +
+                ", dateValidite=" + dateValidite +
                 ", accepte=" + accepte +
                 '}';
     }
