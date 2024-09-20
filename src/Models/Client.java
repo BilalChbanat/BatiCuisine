@@ -3,15 +3,15 @@ package Models;
 public class Client {
     private int id;
     private String name;
-    private String adress;
-    private String telephone;
+    private String address;  // Corrected spelling
+    private String phone;
     private boolean isProfessional;
 
-    public Client(int id, String name, String adress, String telephone, boolean isProfessional) {
+    public Client(int id, String name, String address, String phone, boolean isProfessional) {
         this.id = id;
         this.name = name;
-        this.adress = adress;
-        this.telephone = telephone;
+        this.address = address;  // Corrected spelling
+        this.phone = phone;
         this.isProfessional = isProfessional;
     }
 
@@ -31,20 +31,20 @@ public class Client {
         this.name = name;
     }
 
-    public String getAdress() {
-        return adress;
+    public String getAddress() {  // Corrected spelling
+        return address;
     }
 
-    public void setAdress(String adress) {
-        this.adress = adress;
+    public void setAddress(String address) {  // Corrected spelling
+        this.address = address;
     }
 
-    public String getTelephone() {
-        return telephone;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public boolean isProfessional() {
@@ -60,7 +60,7 @@ public class Client {
         return "\nClient{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", adress='" + adress + '\'' +
+                ", address='" + address + '\'' +  // Corrected spelling
                 ", telephone='" + telephone + '\'' +
                 ", isProfessional=" + isProfessional +
                 '}';
