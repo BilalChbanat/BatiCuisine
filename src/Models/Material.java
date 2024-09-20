@@ -3,17 +3,17 @@ package Models;
 public class Material {
 
     private int id;
-    private double countUnitaire;
+    private double coutUnitaire;
     private double quantite;
     private double coutTransport;
     private double coefficientQualite;
 
-    public Material(int id, double countUnitaire, double quantite, double coutTransport, double coefficientQualite) {
+    public Material(int id, double coutUnitaire, double quantite, double coutTransport, double coefficientQualite) {
         this.id = id;
-        this.countUnitaire = countUnitaire;
-        this.quantite = quantite;
-        this.coutTransport = coutTransport;
-        this.coefficientQualite = coefficientQualite;
+        setCoutUnitaire(coutUnitaire);
+        setQuantite(quantite);
+        setCoutTransport(coutTransport);
+        setCoefficientQualite(coefficientQualite);
     }
 
     public int getId() {
@@ -24,12 +24,15 @@ public class Material {
         this.id = id;
     }
 
-    public double getCountUnitaire() {
-        return countUnitaire;
+    public double getCoutUnitaire() {
+        return coutUnitaire;
     }
 
-    public void setCountUnitaire(double countUnitaire) {
-        this.countUnitaire = countUnitaire;
+    public void setCoutUnitaire(double coutUnitaire) {
+        if(coutUnitaire < 0) {
+            throw new IllegalArgumentException("Le coût unitaire ne peut pas être négatif.");
+        }
+        this.coutUnitaire = coutUnitaire;
     }
 
     public double getQuantite() {
@@ -37,6 +40,9 @@ public class Material {
     }
 
     public void setQuantite(double quantite) {
+        if(quantite <= 0) {
+            throw new IllegalArgumentException("La quantité doit être supérieure à zéro.");
+        }
         this.quantite = quantite;
     }
 
@@ -45,6 +51,9 @@ public class Material {
     }
 
     public void setCoutTransport(double coutTransport) {
+        if(coutTransport < 0) {
+            throw new IllegalArgumentException("Le coût de transport ne peut pas être négatif.");
+        }
         this.coutTransport = coutTransport;
     }
 
@@ -53,14 +62,17 @@ public class Material {
     }
 
     public void setCoefficientQualite(double coefficientQualite) {
+        if(coefficientQualite < 1.0) {
+            throw new IllegalArgumentException("Le coefficient de qualité doit être au moins 1.0.");
+        }
         this.coefficientQualite = coefficientQualite;
     }
 
     @Override
     public String toString() {
-        return "\nMaterial{" +
+        return "Material{" +
                 "id=" + id +
-                ", countUnitaire=" + countUnitaire +
+                ", coutUnitaire=" + coutUnitaire +
                 ", quantite=" + quantite +
                 ", coutTransport=" + coutTransport +
                 ", coefficientQualite=" + coefficientQualite +
