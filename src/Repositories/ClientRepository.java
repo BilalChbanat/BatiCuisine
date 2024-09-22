@@ -4,10 +4,7 @@ import Database.DatabaseConnection;
 import Interfaces.ClientInterface;
 import Models.Client;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,10 +14,9 @@ public class ClientRepository implements ClientInterface {
     private Connection connection;
 
     public ClientRepository() {
-        this.connection = DatabaseConnection.getInstance().getConnection();
+        this.connection = DatabaseConnection.getConnection();
     }
 
-    // Adding a new client to the database
     @Override
     public void addClient(Client client) {
         String query = "INSERT INTO clients (name, address, phone, isProfessional) VALUES (?, ?, ?, ?)";
@@ -37,7 +33,6 @@ public class ClientRepository implements ClientInterface {
         }
     }
 
-    // Finding a client by name
     @Override
     public Optional<Client> getClientByName(String name) {
         String query = "SELECT * FROM clients WHERE name = ?";
@@ -49,6 +44,7 @@ public class ClientRepository implements ClientInterface {
 
             if (rs.next()) {
                 client = new Client(
+                        rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("address"),
                         rs.getString("phone"),
@@ -62,9 +58,9 @@ public class ClientRepository implements ClientInterface {
         return Optional.ofNullable(client);
     }
 
-    // Retrieving all clients from the database
     @Override
     public List<Client> getAllClients() {
+        // Corrected table name from "batiCuisine" to "clients"
         String query = "SELECT * FROM clients";
         List<Client> clients = new ArrayList<>();
 
@@ -73,6 +69,7 @@ public class ClientRepository implements ClientInterface {
 
             while (rs.next()) {
                 Client client = new Client(
+                        rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("address"),
                         rs.getString("phone"),
@@ -86,4 +83,23 @@ public class ClientRepository implements ClientInterface {
 
         return clients;
     }
+
+    @Override
+    public void updateClient(Client client) {
+        String query = "UPDATE clients SET name = ?, address = ?, phone = ?, isProfessional = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, client.getName());
+            stmt.setString(2, client.getAddress());
+            stmt.setString(3, client.getPhone());
+            stmt.setBoolean(4, client.isProfessional());
+            stmt.setInt(5, client.getId());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

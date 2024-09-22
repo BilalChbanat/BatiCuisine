@@ -3,14 +3,14 @@ package Models;
 public class Client {
     private int id;
     private String name;
-    private String address;  // Corrected spelling
+    private String address;
     private String phone;
     private boolean isProfessional;
 
     public Client(int id, String name, String address, String phone, boolean isProfessional) {
         this.id = id;
         this.name = name;
-        this.address = address;  // Corrected spelling
+        this.address = address;
         this.phone = phone;
         this.isProfessional = isProfessional;
     }
@@ -31,11 +31,11 @@ public class Client {
         this.name = name;
     }
 
-    public String getAddress() {  // Corrected spelling
+    public String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {  // Corrected spelling
+    public void setAddress(String address) {
         this.address = address;
     }
 
@@ -61,7 +61,7 @@ public class Client {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +  // Corrected spelling
-                ", telephone='" + telephone + '\'' +
+                ", phone='" + phone + '\'' +
                 ", isProfessional=" + isProfessional +
                 '}';
     }
