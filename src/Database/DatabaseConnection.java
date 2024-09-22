@@ -5,43 +5,39 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
+    private static Connection connection = null;
+    private static final String URL = "jdbc:postgresql://localhost:5432/baticuisine";
 
-    private static DatabaseConnection instance;
-    private Connection connection;
-
-    private static final String URL = "jdbc:postgresql://localhost:5432/BatiCuisine";
     private static final String USER = "admin";
     private static final String PASSWORD = "admin";
 
-    private DatabaseConnection() {
-        try {
-            Class.forName("org.postgresql.Driver");
+    private DatabaseConnection() {}
 
-            this.connection = DriverManager.getConnection(URL, USER, PASSWORD);
-
-        } catch (ClassNotFoundException | SQLException e) {
-            System.out.println("Error during database connection initialization: " + e.getMessage());
-            e.printStackTrace();
+    public static Connection getConnection() {
+        if (connection == null) {
+            synchronized (DatabaseConnection.class) {
+                if (connection == null) {
+                    try {
+                        // Load the PostgreSQL JDBC driver
+                        Class.forName("org.postgresql.Driver");
+                        // Establish the connection
+                        connection = DriverManager.getConnection(URL, USER, PASSWORD);
+                        System.out.println("Database connection established.");
+                    } catch (SQLException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
-    }
-
-    public static synchronized DatabaseConnection getInstance() {
-        if (instance == null) {
-            instance = new DatabaseConnection();
-        }
-        return instance;
-    }
-
-    public Connection getConnection() {
         return connection;
     }
 
-    public void closeConnection() {
+    public static void closeConnection() {
         if (connection != null) {
             try {
                 connection.close();
+                System.out.println("Database connection closed.");
             } catch (SQLException e) {
-                System.out.println("Error closing the connection: " + e.getMessage());
                 e.printStackTrace();
             }
         }

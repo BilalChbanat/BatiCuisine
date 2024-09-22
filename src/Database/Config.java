@@ -1,37 +1,35 @@
 package Database;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class Config {
-
     public static void main(String[] args) {
-        DatabaseConnection connectionManager = DatabaseConnection.getInstance();
+        Connection connection = null;
 
-        Connection connection = connectionManager.getConnection();
+        try {
+            // Get the database connection
+            connection = DatabaseConnection.getConnection();
 
-        if (connection != null) {
-            System.out.println("Successfully connected to the database!");
-
-            try (Statement statement = connection.createStatement()) {
-                ResultSet resultSet = statement.executeQuery("SELECT CURRENT_TIMESTAMP");
-
-                if (resultSet.next()) {
-                    System.out.println("Current Timestamp: " + resultSet.getString(1));
-                }
-            } catch (SQLException e) {
-                System.out.println("Error executing test query: " + e.getMessage());
-            } finally {
-                connectionManager.closeConnection();
+            // Test if the connection is valid
+            if (connection != null && !connection.isClosed()) {
+                System.out.println("Connection to the database is successful!");
+            } else {
+                System.out.println("Failed to establish a connection.");
             }
-        } else {
-            System.out.println("Failed to connect to the database.");
+        } catch (SQLException e) {
+            System.out.println("Error while testing the connection: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            // Close the connection if it was established
+            if (connection != null) {
+                try {
+                    DatabaseConnection.closeConnection();
+                } catch (Exception e) {
+                    System.out.println("Error closing the connection: " + e.getMessage());
+                }
+            }
         }
     }
 }
-
-
-
