@@ -3,19 +3,37 @@ package Models;
 import Enums.ProjectStatus;
 
 public class Project {
-
     private int id;
     private String name;
     private double profitMargin;
     private double totalCost;
     private ProjectStatus projectStatus;
+    private int clientId;
 
-    public Project(int id, String name, double profitMargin, double totalCost, ProjectStatus projectStatus) {
+    public Project(int id, String name, double profitMargin, double totalCost, ProjectStatus projectStatus, int clientId) {
         this.id = id;
         this.name = name;
         this.profitMargin = profitMargin;
         this.totalCost = totalCost;
         this.projectStatus = projectStatus;
+        this.clientId = clientId;  // Fixed assignment
+    }
+
+    public Project(String name, double profitMargin, double totalCost, ProjectStatus projectStatus, int clientId) {
+        this.name = name;
+        this.profitMargin = profitMargin;
+        this.totalCost = totalCost;
+        this.projectStatus = projectStatus;
+        this.clientId = clientId;  // Fixed assignment
+    }
+
+    // Getters and setters
+    public int getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
     }
 
     public int getId() {
@@ -66,8 +84,7 @@ public class Project {
                 ", profitMargin=" + profitMargin +
                 ", totalCost=" + totalCost +
                 ", projectStatus=" + projectStatus +
+                ", clientId=" + clientId +  // Fixed to clientId
                 '}';
     }
 }
-
-

@@ -1,10 +1,11 @@
 package Services;
 
 import Enums.ProjectStatus;
+import Interfaces.ClientInterface;
 import Interfaces.ProjectInterface;
-import Models.MainDoeuvre;
-import Models.Material;
+import Models.Client;
 import Models.Project;
+import Repositories.ClientRepository;
 import Repositories.ProjectRepository;
 
 import java.util.List;
@@ -13,22 +14,23 @@ import java.util.Scanner;
 
 public class ProjectService {
     private final ProjectInterface projectRepository;
+    private final ClientInterface clientRepository;
     private final Scanner scanner;
 
-    public ProjectService(ProjectInterface projectRepository) {
+    public ProjectService(ProjectInterface projectRepository, ClientInterface clientRepository) {
         this.projectRepository = projectRepository;
+        this.clientRepository = clientRepository;
         this.scanner = new Scanner(System.in);
     }
 
     public void displayMenu() {
         while (true) {
-            System.out.println("\n═════════════════════ Project Management ═════════════════════");
-            System.out.println("1: Create a new project");
-            System.out.println("2: View all projects");
-            System.out.println("3: Update a project");
-            System.out.println("4: Calculate project cost");
-            System.out.println("5: Exit");
-            System.out.print("Enter your choice: ");
+            System.out.println("\n=== Menu Principal ===");
+            System.out.println("1. Créer un nouveau projet");
+            System.out.println("2. Afficher les projets existants");
+            System.out.println("3. Calculer le coût d'un projet");
+            System.out.println("4. Quitter");
+            System.out.print("Choisissez une option : ");
 
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume newline
@@ -41,102 +43,132 @@ public class ProjectService {
                     viewAllProjects();
                     break;
                 case 3:
-                    updateProject();
-                    break;
-                case 4:
                     calculateProjectCost();
                     break;
-                case 5:
-                    System.out.println("Exiting...");
+                case 4:
+                    System.out.println("Au revoir !");
                     return;
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Choix invalide. Veuillez réessayer.");
             }
         }
     }
 
     private void createProject() {
-        System.out.print("Enter project name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter profit margin: ");
-        double profitMargin = scanner.nextDouble();
-        System.out.print("Enter total cost: ");
-        double totalCost = scanner.nextDouble();
-        scanner.nextLine(); // Consume newline
+        System.out.println("--- Recherche de client ---");
+        System.out.println("Souhaitez-vous chercher un client existant ou en ajouter un nouveau ?");
+        System.out.println("1. Chercher un client existant");
+        System.out.println("2. Ajouter un nouveau client");
+        System.out.print("Choisissez une option : ");
 
-        System.out.print("Enter project status (e.g., IN_PROGRESS, COMPLETED): ");
-        String statusInput = scanner.nextLine();
+        int clientChoice = scanner.nextInt();
+        scanner.nextLine();
 
-        // Validate input against enum constants
-        ProjectStatus projectStatus;
-        try {
-            projectStatus = ProjectStatus.valueOf(statusInput);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid project status. Please enter a valid status.");
-            return;
+        Client client = null;
+
+        if (clientChoice == 1) {
+            client = searchExistingClient();
+        } else if (clientChoice == 2) {
+            client = addNewClient();
         }
 
-        Project project = new Project(0, name, profitMargin, totalCost, projectStatus);
-        projectRepository.createProject(project);
+        if (client != null) {
+            System.out.println("--- Création d'un Nouveau Projet ---");
+            System.out.print("Entrez le nom du projet : ");
+            String projectName = scanner.nextLine();
+
+            System.out.print("Entrez la surface de la cuisine (en m²) : ");
+            double surfaceArea = scanner.nextDouble();
+            scanner.nextLine();
+
+            System.out.print("Entrez l'état du projet (IN_PROGRESS., COMPLETED, CANCELLED) : ");
+            String statusInput = scanner.nextLine();
+            ProjectStatus projectStatus = ProjectStatus.valueOf(statusInput.toUpperCase());
+
+            Project project = new Project(0, projectName, surfaceArea, 0.0, projectStatus, client.getId());
+            projectRepository.createProject(project);
+
+            addMaterialsToProject(project);
+            System.out.println("Projet créé avec succès pour le client : " + client.getName());
+        } else {
+            System.out.println("Aucun client sélectionné. Projet non créé.");
+        }
+    }
+
+
+
+
+    private Client searchExistingClient() {
+        System.out.print("Entrez le nom du client : ");
+        String clientName = scanner.nextLine();
+        Optional<Client> clientOptional = clientRepository.getClientByName(clientName);
+
+        if (clientOptional.isPresent()) {
+            Client client = clientOptional.get();
+            System.out.println("Client trouvé !");
+            System.out.println("Nom : " + client.getName());
+            System.out.println("Adresse : " + client.getAddress());
+            System.out.println("Numéro de téléphone : " + client.getPhone());
+            System.out.print("Souhaitez-vous continuer avec ce client ? (y/n) : ");
+            String response = scanner.nextLine();
+
+            if (response.equalsIgnoreCase("y")) {
+                return client;
+            }
+        } else {
+            System.out.println("Client non trouvé.");
+        }
+
+        return null; // Return null if no client found or user does not want to proceed
+    }
+
+
+
+
+    private Client addNewClient() {
+        System.out.print("Entrez le nom du client : ");
+        String name = scanner.nextLine();
+        System.out.print("Entrez l'adresse : ");
+        String address = scanner.nextLine();
+        System.out.print("Entrez le numéro de téléphone : ");
+        String phone = scanner.nextLine();
+        System.out.print("Le client est-il un professionnel ? (true/false) : ");
+        boolean isProfessional = scanner.nextBoolean();
+        scanner.nextLine(); // Consume newline
+
+        Client newClient = new Client(0, name, address, phone, isProfessional);
+        clientRepository.addClient(newClient);
+        System.out.println("Client ajouté avec succès.");
+        return newClient;
+    }
+
+    private void addMaterialsToProject(Project project) {
+        // Logic to add materials (similar to your example)
+        System.out.println("--- Ajout des matériaux ---");
+        // Implement adding materials...
     }
 
     private void viewAllProjects() {
         List<Project> projects = projectRepository.getAllProjects();
         if (projects.isEmpty()) {
-            System.out.println("No projects found.");
+            System.out.println("Aucun projet trouvé.");
         } else {
-            System.out.println("List of projects:");
+            System.out.println("Projets existants :");
             for (Project project : projects) {
                 System.out.println(project);
             }
         }
     }
 
-    private void updateProject() {
-        System.out.print("Enter the ID of the project to update: ");
-        int id = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
-
-        Optional<Project> optionalProject = projectRepository.getProjectById(id);
-        if (optionalProject.isPresent()) {
-            Project project = optionalProject.get();
-            System.out.print("Enter new name (leave blank to keep current): ");
-            String newName = scanner.nextLine();
-            if (!newName.isEmpty()) {
-                project.setName(newName);
-            }
-            System.out.print("Enter new profit margin (leave blank to keep current): ");
-            String newProfitMarginInput = scanner.nextLine();
-            if (!newProfitMarginInput.isEmpty()) {
-                project.setProfitMargin(Double.parseDouble(newProfitMarginInput));
-            }
-            System.out.print("Enter new total cost (leave blank to keep current): ");
-            String newTotalCostInput = scanner.nextLine();
-            if (!newTotalCostInput.isEmpty()) {
-                project.setTotalCost(Double.parseDouble(newTotalCostInput));
-            }
-            System.out.print("Enter new project status (leave blank to keep current): ");
-            String newStatusInput = scanner.nextLine();
-            if (!newStatusInput.isEmpty()) {
-                project.setProjectStatus(ProjectStatus.valueOf(newStatusInput));
-            }
-
-            projectRepository.updateProject(project);
-        } else {
-            System.out.println("Project not found.");
-        }
-    }
-
     private void calculateProjectCost() {
-        System.out.print("Enter the ID of the project to calculate cost: ");
-        int id = scanner.nextInt();
-        double cost = projectRepository.calculateProjectCost(id);
-        System.out.println("Total cost for project ID " + id + " is: " + cost);
+        // Implement cost calculation logic...
     }
 
     public static void main(String[] args) {
+        ClientInterface clientRepository = new ClientRepository();
         ProjectInterface projectRepository = new ProjectRepository();
-        ProjectService projectService = new ProjectService(projectRepository);
+        ProjectService projectService = new ProjectService(projectRepository, clientRepository);
         projectService.displayMenu();
     }
+
 }

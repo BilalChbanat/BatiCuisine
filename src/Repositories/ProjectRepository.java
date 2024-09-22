@@ -3,6 +3,7 @@ package Repositories;
 import Database.DatabaseConnection;
 import Enums.ProjectStatus;
 import Interfaces.ProjectInterface;
+import Models.Client;
 import Models.Project;
 
 import java.sql.*;
@@ -19,18 +20,19 @@ public class ProjectRepository implements ProjectInterface {
 
     @Override
     public void createProject(Project project) {
-        String query = "INSERT INTO projects (name, profit_margin, total_cost, project_status) VALUES (?, ?, ?, ?)";
-
+        String query = "INSERT INTO projects (name, profit_margin, total_cost, project_status, client_id) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+
             stmt.setString(1, project.getName());
             stmt.setDouble(2, project.getProfitMargin());
             stmt.setDouble(3, project.getTotalCost());
             stmt.setString(4, project.getProjectStatus().name());
+            stmt.setInt(5, project.getClientId()); // Using the clientId directly from the Project object
 
             stmt.executeUpdate();
             ResultSet generatedKeys = stmt.getGeneratedKeys();
             if (generatedKeys.next()) {
-                project.setId(generatedKeys.getInt(1)); // Set the generated ID
+                project.setId(generatedKeys.getInt(1)); // Set the generated project ID
                 System.out.println("Project created: " + project.getName());
             }
         } catch (SQLException e) {
@@ -38,16 +40,36 @@ public class ProjectRepository implements ProjectInterface {
         }
     }
 
+
+    private int fetchClientId(Client client) {
+        String query = "SELECT id FROM clients WHERE name = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, client.getName());
+            ResultSet resultSet = stmt.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt("id");
+            } else {
+                throw new IllegalStateException("Client not found: " + client.getName());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
     @Override
     public void updateProject(Project project) {
-        String query = "UPDATE projects SET name = ?, profit_margin = ?, total_cost = ?, project_status = ? WHERE id = ?";
+        String query = "UPDATE projects SET name = ?, profit_margin = ?, total_cost = ?, project_status = ?, client_id = ? WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, project.getName());
             stmt.setDouble(2, project.getProfitMargin());
             stmt.setDouble(3, project.getTotalCost());
             stmt.setString(4, project.getProjectStatus().name());
-            stmt.setInt(5, project.getId());
+            stmt.setInt(5, project.getClientId()); // Directly using clientId from Project
+            stmt.setInt(6, project.getId());
 
             stmt.executeUpdate();
             System.out.println("Project updated: " + project.getName());
@@ -57,60 +79,40 @@ public class ProjectRepository implements ProjectInterface {
     }
 
     @Override
-    public double calculateProjectCost(int id) {
-        Optional<Project> projectOptional = getProjectById(id);
-        if (projectOptional.isPresent()) {
-            Project project = projectOptional.get();
-            return project.getTotalCost();
-        }
-        System.out.println("Project not found.");
-        return 0.0;
-    }
-
-    @Override
     public List<Project> getAllProjects() {
         List<Project> projects = new ArrayList<>();
         String query = "SELECT * FROM projects";
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             ResultSet rs = stmt.executeQuery();
+
             while (rs.next()) {
                 Project project = new Project(
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getDouble("profit_margin"),
                         rs.getDouble("total_cost"),
-                        ProjectStatus.valueOf(rs.getString("project_status"))
+                        ProjectStatus.valueOf(rs.getString("project_status")),
+                        rs.getInt("client_id")
                 );
                 projects.add(project);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return projects;
+        return projects; // Return the populated list of projects
     }
 
     @Override
     public Optional<Project> getProjectById(int id) {
-        String query = "SELECT * FROM projects WHERE id = ?";
-        Project project = null;
-
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                project = new Project(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getDouble("profit_margin"),
-                        rs.getDouble("total_cost"),
-                        ProjectStatus.valueOf(rs.getString("project_status"))
-                );
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return Optional.ofNullable(project);
+        return Optional.empty();
     }
+
+    @Override
+    public double calculateProjectCost(int id) {
+        Optional<Project> projectOptional = getProjectById(id);
+        return projectOptional.map(Project::getTotalCost).orElse(0.0);
+    }
+
+
 }
