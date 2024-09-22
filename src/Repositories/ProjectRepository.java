@@ -3,8 +3,6 @@ package Repositories;
 import Database.DatabaseConnection;
 import Enums.ProjectStatus;
 import Interfaces.ProjectInterface;
-import Models.MainDoeuvre;
-import Models.Material;
 import Models.Project;
 
 import java.sql.*;
@@ -63,7 +61,7 @@ public class ProjectRepository implements ProjectInterface {
         Optional<Project> projectOptional = getProjectById(id);
         if (projectOptional.isPresent()) {
             Project project = projectOptional.get();
-            return project.getTotalCost(); // Adjust this based on your logic
+            return project.getTotalCost();
         }
         System.out.println("Project not found.");
         return 0.0;
