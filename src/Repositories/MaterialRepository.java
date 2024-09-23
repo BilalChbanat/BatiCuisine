@@ -2,6 +2,7 @@ package Repositories;
 
 import Interfaces.MaterialInterface;
 import Models.Material;
+import Database.DatabaseConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +11,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import Database.DatabaseConnection; // Assuming you have a DatabaseConnection class
 
 public class MaterialRepository implements MaterialInterface {
     private final Connection connection;
@@ -21,20 +21,19 @@ public class MaterialRepository implements MaterialInterface {
 
     @Override
     public void addMaterial(Material material) {
-        String query = "INSERT INTO materials (name, quantite, coutUnitaire, coutTransport, coefficientQualite, tauxTVA, typeComposant) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO materials (name, quantite, coutUnitaire, coutTransport, coefficientQualite, tauxTVA, typeComposant) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, material.getName());
             stmt.setDouble(2, material.getQuantity());
             stmt.setDouble(3, material.getUnitCost());
             stmt.setDouble(4, material.getTransportCost());
             stmt.setDouble(5, material.getQualityCoefficient());
-            stmt.setDouble(6, material.getTauxTVA());  // tauxTVA from Composant
-            stmt.setString(7, material.getTypeComposant());  // typeComposant from Composant
+            stmt.setDouble(6, material.getTauxTVA());
+            stmt.setString(7, material.getTypeComposant());
             stmt.executeUpdate();
             System.out.println("Material added to database: " + material.getName());
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error adding material: " + e.getMessage());
         }
     }
 
@@ -43,12 +42,12 @@ public class MaterialRepository implements MaterialInterface {
         List<Material> materials = new ArrayList<>();
         String query = "SELECT * FROM materials";
 
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            ResultSet rs = stmt.executeQuery();
+        try (PreparedStatement stmt = connection.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 Material material = new Material(
-                        rs.getInt("id"),  // Assuming you have an id field in the database
+                        rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("typeComposant"),
                         rs.getDouble("tauxTVA"),
@@ -60,7 +59,7 @@ public class MaterialRepository implements MaterialInterface {
                 materials.add(material);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error retrieving materials: " + e.getMessage());
         }
 
         return materials;
@@ -73,24 +72,26 @@ public class MaterialRepository implements MaterialInterface {
 
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, name);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                material = new Material(
-                        rs.getInt("id"),  // Assuming you have an id field in the database
-                        rs.getString("name"),
-                        rs.getString("typeComposant"),
-                        rs.getDouble("tauxTVA"),
-                        rs.getDouble("quantite"),
-                        rs.getDouble("coutUnitaire"),
-                        rs.getDouble("coutTransport"),
-                        rs.getDouble("coefficientQualite")
-                );
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    material = new Material(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getString("typeComposant"),
+                            rs.getDouble("tauxTVA"),
+                            rs.getDouble("quantite"),
+                            rs.getDouble("coutUnitaire"),
+                            rs.getDouble("coutTransport"),
+                            rs.getDouble("coefficientQualite")
+                    );
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error retrieving material by name: " + e.getMessage());
         }
 
         return Optional.ofNullable(material);
     }
+
+    // Additional methods (updateMaterial, deleteMaterial) can be added here
 }

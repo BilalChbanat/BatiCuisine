@@ -19,17 +19,24 @@ public class ClientRepository implements ClientInterface {
 
     @Override
     public void addClient(Client client) {
-        String query = "INSERT INTO clients (name, address, phone, isProfessional) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO clients (name, address, phone, isProfessional) VALUES (?, ?, ?, ?) RETURNING id";
 
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+        try (PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, client.getName());
             stmt.setString(2, client.getAddress());
             stmt.setString(3, client.getPhone());
             stmt.setBoolean(4, client.isProfessional());
 
-            stmt.executeUpdate();
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        client.setId(generatedKeys.getInt(1));
+                    }
+                }
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error adding client: " + e.getMessage());
         }
     }
 

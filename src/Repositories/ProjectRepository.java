@@ -27,12 +27,12 @@ public class ProjectRepository implements ProjectInterface {
             stmt.setDouble(2, project.getProfitMargin());
             stmt.setDouble(3, project.getTotalCost());
             stmt.setString(4, project.getProjectStatus().name());
-            stmt.setInt(5, project.getClientId()); // Using the clientId directly from the Project object
+            stmt.setInt(5, project.getClientId());
 
             stmt.executeUpdate();
             ResultSet generatedKeys = stmt.getGeneratedKeys();
             if (generatedKeys.next()) {
-                project.setId(generatedKeys.getInt(1)); // Set the generated project ID
+                project.setId(generatedKeys.getInt(1));
                 System.out.println("Project created: " + project.getName());
             }
         } catch (SQLException e) {

@@ -1,13 +1,12 @@
 package Models;
 
 public class Material extends Composant {
-    private String name;
     private double quantity;
     private double unitCost;
     private double transportCost;
     private double qualityCoefficient;
 
-    // Constructor with all parameters
+
     public Material(int id, String name, String typeComposant, double tauxTVA,
                     double quantity, double unitCost, double transportCost, double qualityCoefficient) {
         super(id, name, typeComposant, tauxTVA);
@@ -15,16 +14,6 @@ public class Material extends Composant {
         this.unitCost = unitCost;
         this.transportCost = transportCost;
         this.qualityCoefficient = qualityCoefficient;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
     }
 
     public double getQuantity() {
@@ -62,7 +51,7 @@ public class Material extends Composant {
     @Override
     public String toString() {
         return "Material{" +
-                "name='" + name + '\'' +
+                "name='" + getName() + '\'' + // Use getName() from Composant
                 ", quantity=" + quantity +
                 ", unitCost=" + unitCost +
                 ", transportCost=" + transportCost +

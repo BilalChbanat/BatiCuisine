@@ -18,6 +18,8 @@ public class ProjectService {
     private final ClientInterface clientRepository;
     private final Scanner scanner;
     ClientMenu clientmenu = new ClientMenu();
+    MaterialService materialService = new MaterialService();
+
 
     public ProjectService(ProjectInterface projectRepository, ClientInterface clientRepository) {
         this.projectRepository = projectRepository;
@@ -31,12 +33,11 @@ public class ProjectService {
             System.out.println("1. Créer un nouveau projet");
             System.out.println("2. Afficher les projets existants");
             System.out.println("3. Calculer le coût d'un projet");
-            System.out.println("4. Manage CLients");
-            System.out.println("5. Quitter");
+            System.out.println("4. Quitter");
             System.out.print("Choisissez une option : ");
 
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
+            scanner.nextLine();
 
             switch (choice) {
                 case 1:
@@ -46,12 +47,9 @@ public class ProjectService {
                     viewAllProjects();
                     break;
                 case 3:
-                    calculateProjectCost();
+//                    calculateProjectCost();
                     break;
                 case 4:
-                    clientmenu.showMenu();
-                    return;
-                case 5:
                     System.out.println("Au revoir !");
                     return;
                 default:
@@ -87,22 +85,21 @@ public class ProjectService {
             double surfaceArea = scanner.nextDouble();
             scanner.nextLine();
 
-            System.out.print("Entrez l'état du projet (IN_PROGRESS., COMPLETED, CANCELLED) : ");
+            System.out.print("Entrez l'état du projet (IN_PROGRESS, COMPLETED, CANCELLED) : ");
             String statusInput = scanner.nextLine();
             ProjectStatus projectStatus = ProjectStatus.valueOf(statusInput.toUpperCase());
 
             Project project = new Project(0, projectName, surfaceArea, 0.0, projectStatus, client.getId());
             projectRepository.createProject(project);
 
-            addMaterialsToProject(project);
+            materialService.addMaterials();
+
+
             System.out.println("Projet créé avec succès pour le client : " + client.getName());
         } else {
             System.out.println("Aucun client sélectionné. Projet non créé.");
         }
     }
-
-
-
 
     private Client searchExistingClient() {
         System.out.print("Entrez le nom du client : ");
@@ -125,10 +122,8 @@ public class ProjectService {
             System.out.println("Client non trouvé.");
         }
 
-        return null; // Return null if no client found or user does not want to proceed
+        return null;
     }
-
-
 
 
     private Client addNewClient() {
@@ -140,7 +135,7 @@ public class ProjectService {
         String phone = scanner.nextLine();
         System.out.print("Le client est-il un professionnel ? (true/false) : ");
         boolean isProfessional = scanner.nextBoolean();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
 
         Client newClient = new Client(0, name, address, phone, isProfessional);
         clientRepository.addClient(newClient);
@@ -148,10 +143,8 @@ public class ProjectService {
         return newClient;
     }
 
-    private void addMaterialsToProject(Project project) {
-        // Logic to add materials (similar to your example)
-        System.out.println("--- Ajout des matériaux ---");
-        // Implement adding materials...
+    private void addMaterialsToProject(Project project, double tax) {
+
     }
 
     private void viewAllProjects() {
@@ -166,9 +159,6 @@ public class ProjectService {
         }
     }
 
-    private void calculateProjectCost() {
-        // Implement cost calculation logic...
-    }
 
     public static void main(String[] args) {
         ClientInterface clientRepository = new ClientRepository();
@@ -177,4 +167,16 @@ public class ProjectService {
         projectService.displayMenu();
     }
 
+    public double applyTax() {
+        System.out.println("Do you want apply tax for this project (1 for yes | 2 for no)");
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        double tax = 0;
+        if (choice == 1) {
+            System.out.println("Please Entre Tax (ex 20 %): ");
+             tax = scanner.nextDouble();
+        }
+
+        return tax;
+    }
 }
