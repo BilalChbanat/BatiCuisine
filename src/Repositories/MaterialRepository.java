@@ -21,13 +21,16 @@ public class MaterialRepository implements MaterialInterface {
 
     @Override
     public void addMaterial(Material material) {
-        String query = "INSERT INTO materials (name, quantite, coutUnitaire, coutTransport, coefficientQualite) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO materials (name, quantite, coutUnitaire, coutTransport, coefficientQualite, tauxTVA, typeComposant) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, material.getName());
             stmt.setDouble(2, material.getQuantity());
             stmt.setDouble(3, material.getUnitCost());
             stmt.setDouble(4, material.getTransportCost());
             stmt.setDouble(5, material.getQualityCoefficient());
+            stmt.setDouble(6, material.getTauxTVA());  // tauxTVA from Composant
+            stmt.setString(7, material.getTypeComposant());  // typeComposant from Composant
             stmt.executeUpdate();
             System.out.println("Material added to database: " + material.getName());
         } catch (SQLException e) {
@@ -45,7 +48,10 @@ public class MaterialRepository implements MaterialInterface {
 
             while (rs.next()) {
                 Material material = new Material(
+                        rs.getInt("id"),  // Assuming you have an id field in the database
                         rs.getString("name"),
+                        rs.getString("typeComposant"),
+                        rs.getDouble("tauxTVA"),
                         rs.getDouble("quantite"),
                         rs.getDouble("coutUnitaire"),
                         rs.getDouble("coutTransport"),
@@ -71,7 +77,10 @@ public class MaterialRepository implements MaterialInterface {
 
             if (rs.next()) {
                 material = new Material(
+                        rs.getInt("id"),  // Assuming you have an id field in the database
                         rs.getString("name"),
+                        rs.getString("typeComposant"),
+                        rs.getDouble("tauxTVA"),
                         rs.getDouble("quantite"),
                         rs.getDouble("coutUnitaire"),
                         rs.getDouble("coutTransport"),
@@ -84,6 +93,4 @@ public class MaterialRepository implements MaterialInterface {
 
         return Optional.ofNullable(material);
     }
-
-
 }

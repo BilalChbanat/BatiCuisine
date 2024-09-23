@@ -1,10 +1,14 @@
 package Models;
 
-public class MainDoeuvre {
+public class MainDoeuvre extends Composant {
     private int id;
     private double tauxHoraire;
     private double heuresTravail;
     private double productiviteOuvrier;
+
+    public MainDoeuvre(int id, String name, String typeComposant, double tauxTVA) {
+        super(id, name, typeComposant, tauxTVA);
+    }
 
     public int getId() {
         return id;

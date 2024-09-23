@@ -1,13 +1,10 @@
 package Interfaces;
 
 import Models.MainDoeuvre;
-
 import java.util.List;
-import java.util.Optional;
 
 public interface MainDoeuvreInterface {
-
-    void addLabor(MainDoeuvre mainDoeuvre);
-    List<MainDoeuvre> getAllLabor();
-    Optional<MainDoeuvre> getLaborByType(String laborType);
+    public void add(MainDoeuvre mainDoeuvre, int projectId);
+    MainDoeuvre findById(int id);
+    List<MainDoeuvre> findByProjectId(int projectId);
 }

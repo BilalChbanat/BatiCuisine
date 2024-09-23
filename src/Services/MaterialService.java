@@ -7,14 +7,15 @@ import Repositories.MaterialRepository;
 import java.util.Scanner;
 
 public class MaterialService {
-    private final MaterialRepository materialRepository;
+    private final MaterialInterface materialRepository;
+    private final Scanner scanner;
 
-    public MaterialService() {
-        this.materialRepository = new MaterialRepository();
+    public MaterialService(MaterialInterface materialRepository) {
+        this.materialRepository = materialRepository;
+        this.scanner = new Scanner(System.in);  // Initialize scanner once
     }
 
     public void addMaterials() {
-        Scanner scanner = new Scanner(System.in);
         boolean addingMaterials = true;
 
         while (addingMaterials) {
@@ -33,8 +34,10 @@ public class MaterialService {
             System.out.print("Entrez le coefficient de qualité du matériau (1.0 = standard, > 1.0 = haute qualité) : ");
             double qualityCoefficient = Double.parseDouble(scanner.nextLine());
 
-            Material material = new Material(name, quantity, unitCost, transportCost, qualityCoefficient);
-            materialRepository.addMaterial(material); // Save to DB
+            // Create Material with all required parameters
+            Material material = new Material(0, name, "Material", 20.0, // Replace with actual type and TVA
+                    quantity, unitCost, transportCost, qualityCoefficient);
+            materialRepository.addMaterial(material);  // Save to DB
             System.out.println("Matériau ajouté avec succès !");
 
             System.out.print("Voulez-vous ajouter un autre matériau ? (y/n) : ");
@@ -43,13 +46,11 @@ public class MaterialService {
                 addingMaterials = false;
             }
         }
-
-        scanner.close();
     }
 
     public static void main(String[] args) {
         MaterialInterface materialInterface = new MaterialRepository();
-        MaterialService materialService = new MaterialService();  // Corrected here
+        MaterialService materialService = new MaterialService(materialInterface);  // Use interface
         materialService.addMaterials();  // Call the addMaterials method to begin the process
     }
 }
