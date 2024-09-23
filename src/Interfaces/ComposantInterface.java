@@ -2,11 +2,13 @@ package Interfaces;
 
 import Models.Composant;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface ComposantInterface {
 
-    Composant generateComposant(int projectId);
-    void saveComposant(Composant composant);
-    Optional<Composant> getQuoteByProject(int projectId);
+    void add(Composant composant);
+    Composant findByName(String  nom);
+    List<Composant> findAll();
+    void update(Composant composant);
+    void delete(int id);
 }

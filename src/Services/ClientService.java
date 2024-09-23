@@ -18,39 +18,7 @@ public class ClientService {
         this.scanner = new Scanner(System.in);
     }
 
-    public void displayMenu() {
-        while (true) {
-            System.out.println("\n═════════════════════ Customer Management ═════════════════════");
-            System.out.println("1: Add a new customer");
-            System.out.println("2: View all customers");
-            System.out.println("3: Update a customer");
-            System.out.println("4: Exit");
-            System.out.print("Enter your choice: ");
-
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-
-            switch (choice) {
-                case 1:
-                    addClient();
-                    break;
-                case 2:
-                    viewAllCustomers();
-                    break;
-                case 3:
-                    updateCustomer();
-                    break;
-
-                case 4:
-                    System.out.println("Exiting...");
-                    return;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-            }
-        }
-    }
-
-    private void addClient() {
+    public void addClient() {
         System.out.print("Enter client name: ");
         String name = scanner.nextLine();
         System.out.print("Enter address: ");
@@ -65,7 +33,7 @@ public class ClientService {
         System.out.println("Client added successfully.");
     }
 
-    private void viewAllCustomers() {
+    public void viewAllCustomers() {
         List<Client> clients = clientRepository.getAllClients();
         if (clients.isEmpty()) {
             System.out.println("No customers found.");
@@ -77,7 +45,7 @@ public class ClientService {
         }
     }
 
-    private void updateCustomer() {
+    public void updateCustomer() {
         System.out.print("Enter the name of the customer to update: ");
         String name = scanner.nextLine();
 
@@ -112,8 +80,6 @@ public class ClientService {
         }
     }
 
-
-
     private Optional<Client> getClientByName(String name) {
         return clientRepository.getClientByName(name);
     }
@@ -121,12 +87,4 @@ public class ClientService {
     public List<Client> getAllClients() {
         return clientRepository.getAllClients();
     }
-
-    public static void main(String[] args) {
-        ClientInterface clientRepository = new ClientRepository();
-        ClientService customerService = new ClientService(clientRepository);
-
-        customerService.displayMenu();
-    }
-
 }

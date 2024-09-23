@@ -60,7 +60,6 @@ public class ClientRepository implements ClientInterface {
 
     @Override
     public List<Client> getAllClients() {
-        // Corrected table name from "batiCuisine" to "clients"
         String query = "SELECT * FROM clients";
         List<Client> clients = new ArrayList<>();
 

@@ -1,5 +1,7 @@
 package Models;
 
+import java.util.Objects;
+
 public class Composant {
     private int id;
     private String name;
@@ -10,7 +12,7 @@ public class Composant {
         this.id = id;
         this.name = name;
         this.typeComposant = typeComposant;
-        this.tauxTVA = tauxTVA;
+        setTauxTVA(tauxTVA);
     }
 
     public int getId() {
@@ -42,10 +44,11 @@ public class Composant {
     }
 
     public void setTauxTVA(double tauxTVA) {
+        if (tauxTVA < 0 || tauxTVA > 100) {
+            throw new IllegalArgumentException("tauxTVA must be between 0 and 100");
+        }
         this.tauxTVA = tauxTVA;
     }
-
-
 
     @Override
     public String toString() {
@@ -55,5 +58,18 @@ public class Composant {
                 ", typeComposant='" + typeComposant + '\'' +
                 ", tauxTVA=" + tauxTVA +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Composant)) return false;
+        Composant composant = (Composant) o;
+        return id == composant.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

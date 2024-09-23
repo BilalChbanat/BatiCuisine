@@ -7,6 +7,7 @@ import Models.Client;
 import Models.Project;
 import Repositories.ClientRepository;
 import Repositories.ProjectRepository;
+import Views.ClientMenu;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,7 @@ public class ProjectService {
     private final ProjectInterface projectRepository;
     private final ClientInterface clientRepository;
     private final Scanner scanner;
+    ClientMenu clientmenu = new ClientMenu();
 
     public ProjectService(ProjectInterface projectRepository, ClientInterface clientRepository) {
         this.projectRepository = projectRepository;
@@ -29,7 +31,8 @@ public class ProjectService {
             System.out.println("1. Créer un nouveau projet");
             System.out.println("2. Afficher les projets existants");
             System.out.println("3. Calculer le coût d'un projet");
-            System.out.println("4. Quitter");
+            System.out.println("4. Manage CLients");
+            System.out.println("5. Quitter");
             System.out.print("Choisissez une option : ");
 
             int choice = scanner.nextInt();
@@ -46,6 +49,9 @@ public class ProjectService {
                     calculateProjectCost();
                     break;
                 case 4:
+                    clientmenu.showMenu();
+                    return;
+                case 5:
                     System.out.println("Au revoir !");
                     return;
                 default:
