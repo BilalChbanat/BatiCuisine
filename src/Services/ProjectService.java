@@ -92,7 +92,7 @@ public class ProjectService {
             Project project = new Project(0, projectName, surfaceArea, 0.0, projectStatus, client.getId());
             projectRepository.createProject(project);
 
-            materialService.addMaterials();
+            materialService.addMaterials(project);
 
 
             System.out.println("Projet créé avec succès pour le client : " + client.getName());

@@ -5,15 +5,17 @@ public class Material extends Composant {
     private double unitCost;
     private double transportCost;
     private double qualityCoefficient;
+    private int projectId;
 
 
     public Material(int id, String name, String typeComposant, double tauxTVA,
-                    double quantity, double unitCost, double transportCost, double qualityCoefficient) {
+                    double quantity, double unitCost, double transportCost, double qualityCoefficient, int projectId) {
         super(id, name, typeComposant, tauxTVA);
         this.quantity = quantity;
         this.unitCost = unitCost;
         this.transportCost = transportCost;
         this.qualityCoefficient = qualityCoefficient;
+        this.projectId = projectId;
     }
 
     public double getQuantity() {
@@ -46,6 +48,14 @@ public class Material extends Composant {
 
     public void setQualityCoefficient(double qualityCoefficient) {
         this.qualityCoefficient = qualityCoefficient;
+    }
+
+    public int getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
     }
 
     @Override

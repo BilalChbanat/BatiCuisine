@@ -21,7 +21,7 @@ public class MaterialRepository implements MaterialInterface {
 
     @Override
     public void addMaterial(Material material) {
-        String query = "INSERT INTO materials (name, quantite, coutUnitaire, coutTransport, coefficientQualite, tauxTVA, typeComposant) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO materials (name, quantite, coutUnitaire, coutTransport, coefficientQualite, tauxTVA, typeComposant, project_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, material.getName());
             stmt.setDouble(2, material.getQuantity());
@@ -30,6 +30,7 @@ public class MaterialRepository implements MaterialInterface {
             stmt.setDouble(5, material.getQualityCoefficient());
             stmt.setDouble(6, material.getTauxTVA());
             stmt.setString(7, material.getTypeComposant());
+            stmt.setInt(8, material.getProjectId());
             stmt.executeUpdate();
             System.out.println("Material added to database: " + material.getName());
         } catch (SQLException e) {
@@ -54,7 +55,8 @@ public class MaterialRepository implements MaterialInterface {
                         rs.getDouble("quantite"),
                         rs.getDouble("coutUnitaire"),
                         rs.getDouble("coutTransport"),
-                        rs.getDouble("coefficientQualite")
+                        rs.getDouble("coefficientQualite"),
+                        rs.getInt("project_id")
                 );
                 materials.add(material);
             }
@@ -82,7 +84,8 @@ public class MaterialRepository implements MaterialInterface {
                             rs.getDouble("quantite"),
                             rs.getDouble("coutUnitaire"),
                             rs.getDouble("coutTransport"),
-                            rs.getDouble("coefficientQualite")
+                            rs.getDouble("coefficientQualite"),
+                            rs.getInt("project_id")
                     );
                 }
             }
@@ -93,5 +96,36 @@ public class MaterialRepository implements MaterialInterface {
         return Optional.ofNullable(material);
     }
 
-    // Additional methods (updateMaterial, deleteMaterial) can be added here
+    public void updateMaterial(Material material) {
+        String query = "UPDATE materials SET name = ?, quantite = ?, coutUnitaire = ?, coutTransport = ?, coefficientQualite = ?, tauxTVA = ?, typeComposant = ? WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, material.getName());
+            stmt.setDouble(2, material.getQuantity());
+            stmt.setDouble(3, material.getUnitCost());
+            stmt.setDouble(4, material.getTransportCost());
+            stmt.setDouble(5, material.getQualityCoefficient());
+            stmt.setDouble(6, material.getTauxTVA());
+            stmt.setString(7, material.getTypeComposant());
+            stmt.setInt(8, material.getId());
+
+            stmt.executeUpdate();
+            System.out.println("Material updated in database: " + material.getName());
+        } catch (SQLException e) {
+            System.err.println("Error updating material: " + e.getMessage());
+        }
+    }
+
+    // Optional: Implement deleteMaterial method
+    public void deleteMaterial(int materialId) {
+        String query = "DELETE FROM materials WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, materialId);
+            stmt.executeUpdate();
+            System.out.println("Material deleted from database with ID: " + materialId);
+        } catch (SQLException e) {
+            System.err.println("Error deleting material: " + e.getMessage());
+        }
+    }
 }

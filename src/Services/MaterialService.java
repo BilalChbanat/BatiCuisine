@@ -2,6 +2,7 @@ package Services;
 
 import Interfaces.MaterialInterface;
 import Models.Material;
+import Models.Project;
 import Repositories.MaterialRepository;
 
 import java.util.InputMismatchException;
@@ -16,7 +17,7 @@ public class MaterialService {
         this.scanner = new Scanner(System.in);
     }
 
-    public void addMaterials() {
+    public void addMaterials(Project project) {
         boolean addingMaterials = true;
 
         while (addingMaterials) {
@@ -44,7 +45,9 @@ public class MaterialService {
                 System.out.print("Entrez le taux de TVA (ex: 20 pour 20%) : ");
                 double tauxTVA = getValidDoubleInput();
 
-                Material material = new Material(0, name, typeComposant, tauxTVA, quantity, unitCost, transportCost, qualityCoefficient);
+
+
+                Material material = new Material(0, name, typeComposant, tauxTVA, quantity, unitCost, transportCost, qualityCoefficient, project.getId());
                 materialInterface.addMaterial(material);
                 System.out.println("Matériau ajouté avec succès !");
 
@@ -71,7 +74,7 @@ public class MaterialService {
 
     public static void main(String[] args) {
         MaterialService materialService = new MaterialService();
-        materialService.addMaterials();
+//        materialService.addMaterials();
         materialService.scanner.close();
     }
 }
