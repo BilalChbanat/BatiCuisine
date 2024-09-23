@@ -5,12 +5,14 @@ public class Composant {
     private String name;
     private String typeComposant;
     private double tauxTVA;
+    private Project project; // Add this line
 
-    public Composant(int id, String name, String typeComposant, double tauxTVA) {
+    public Composant(int id, String name, String typeComposant, double tauxTVA, Project project) {
         this.id = id;
         this.name = name;
         this.typeComposant = typeComposant;
         this.tauxTVA = tauxTVA;
+        this.project = project; // Update constructor
     }
 
     public int getId() {
@@ -45,6 +47,14 @@ public class Composant {
         this.tauxTVA = tauxTVA;
     }
 
+    public Project getProject() {
+        return project; // Add this getter
+    }
+
+    public void setProject(Project project) {
+        this.project = project; // Add this setter
+    }
+
     @Override
     public String toString() {
         return "Composant{" +
@@ -52,6 +62,7 @@ public class Composant {
                 ", name='" + name + '\'' +
                 ", typeComposant='" + typeComposant + '\'' +
                 ", tauxTVA=" + tauxTVA +
+                ", project=" + project +
                 '}';
     }
 }

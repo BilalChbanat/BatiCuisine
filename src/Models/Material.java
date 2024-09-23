@@ -1,81 +1,70 @@
 package Models;
 
+
 public class Material {
 
-    private int id;
-    private double coutUnitaire;
-    private double quantite;
-    private double coutTransport;
-    private double coefficientQualite;
+    private String name;
+    private double quantity;
+    private double unitCost;
+    private double transportCost;
+    private double qualityCoefficient;
 
-    public Material(int id, double coutUnitaire, double quantite, double coutTransport, double coefficientQualite) {
-        this.id = id;
-        setCoutUnitaire(coutUnitaire);
-        setQuantite(quantite);
-        setCoutTransport(coutTransport);
-        setCoefficientQualite(coefficientQualite);
+    public Material(String name, double quantity, double unitCost, double transportCost, double qualityCoefficient) {
+        this.name = name;
+        this.quantity = quantity;
+        this.unitCost = unitCost;
+        this.transportCost = transportCost;
+        this.qualityCoefficient = qualityCoefficient;
     }
 
-    public int getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public double getCoutUnitaire() {
-        return coutUnitaire;
+    public double getQuantity() {
+        return quantity;
     }
 
-    public void setCoutUnitaire(double coutUnitaire) {
-        if(coutUnitaire < 0) {
-            throw new IllegalArgumentException("Le coût unitaire ne peut pas être négatif.");
-        }
-        this.coutUnitaire = coutUnitaire;
+    public void setQuantity(double quantity) {
+        this.quantity = quantity;
     }
 
-    public double getQuantite() {
-        return quantite;
+    public double getUnitCost() {
+        return unitCost;
     }
 
-    public void setQuantite(double quantite) {
-        if(quantite <= 0) {
-            throw new IllegalArgumentException("La quantité doit être supérieure à zéro.");
-        }
-        this.quantite = quantite;
+    public void setUnitCost(double unitCost) {
+        this.unitCost = unitCost;
     }
 
-    public double getCoutTransport() {
-        return coutTransport;
+    public double getTransportCost() {
+        return transportCost;
     }
 
-    public void setCoutTransport(double coutTransport) {
-        if(coutTransport < 0) {
-            throw new IllegalArgumentException("Le coût de transport ne peut pas être négatif.");
-        }
-        this.coutTransport = coutTransport;
+    public void setTransportCost(double transportCost) {
+        this.transportCost = transportCost;
     }
 
-    public double getCoefficientQualite() {
-        return coefficientQualite;
+    public double getQualityCoefficient() {
+        return qualityCoefficient;
     }
 
-    public void setCoefficientQualite(double coefficientQualite) {
-        if(coefficientQualite < 1.0) {
-            throw new IllegalArgumentException("Le coefficient de qualité doit être au moins 1.0.");
-        }
-        this.coefficientQualite = coefficientQualite;
+    public void setQualityCoefficient(double qualityCoefficient) {
+        this.qualityCoefficient = qualityCoefficient;
     }
 
     @Override
     public String toString() {
         return "Material{" +
-                "id=" + id +
-                ", coutUnitaire=" + coutUnitaire +
-                ", quantite=" + quantite +
-                ", coutTransport=" + coutTransport +
-                ", coefficientQualite=" + coefficientQualite +
+                "name='" + name + '\'' +
+                ", quantity=" + quantity +
+                ", unitCost=" + unitCost +
+                ", transportCost=" + transportCost +
+                ", qualityCoefficient=" + qualityCoefficient +
                 '}';
     }
 }
