@@ -1,73 +1,60 @@
 package Services;
 
+import Interfaces.MainDoeuvreInterface;
 import Models.MainDoeuvre;
 import Repositories.MainDoeuvreRepository;
 
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
 public class MainDoeuvreService {
-    private final MainDoeuvreRepository mainDoeuvreRepository;
-    private final Scanner scanner;
+    private MainDoeuvreInterface mainDoeuvreInterface;
+    private Scanner scanner;
 
-    public MainDoeuvreService(MainDoeuvreRepository mainDoeuvreRepository) {
-        this.mainDoeuvreRepository = mainDoeuvreRepository;
+    public MainDoeuvreService() {
+        this.mainDoeuvreInterface = new MainDoeuvreRepository();
         this.scanner = new Scanner(System.in);
     }
 
     public void addLabor(int projectId) {
-        System.out.println("--- Ajout de la main-d'œuvre ---");
+        String addMore = "y";
 
-        System.out.print("Entrez le type de main-d'œuvre (e.g., Ouvrier de base, Spécialiste) : ");
-        String name = scanner.nextLine();
+        while (addMore.equalsIgnoreCase("y")) {
+            System.out.println("--- Ajout de la main-d'œuvre ---");
 
-        String typeComposant = "Main-d'œuvre";
+            System.out.print("Entrez le type de main-d'œuvre (e.g., Ouvrier de base, Spécialiste) : ");
+            String name = scanner.nextLine();
 
-        double tauxTVA = getDoubleInput("Entrez le taux de TVA (%) : ");
-        double tauxHoraire = getDoubleInput("Entrez le taux horaire de cette main-d'œuvre (€/h) : ");
-        double heuresTravail = getDoubleInput("Entrez le nombre d'heures travaillées : ");
-        double productiviteOuvrier = getDoubleInput("Entrez le facteur de productivité (1.0 = standard, > 1.0 = haute productivité) : ");
+            String typeComposant = "Main-d'œuvre";
 
-        // Create a new MainDoeuvre instance and set the fields
-        MainDoeuvre mainDoeuvre = new MainDoeuvre(0, name, typeComposant, tauxTVA, tauxHoraire, heuresTravail, productiviteOuvrier);
+            System.out.print("Entrez le taux de TVA (%) : ");
+            double tauxTVA = scanner.nextDouble();
 
-        // Add labor to the repository
-        mainDoeuvreRepository.add(mainDoeuvre, projectId);
-        System.out.println("Main-d'œuvre ajoutée avec succès !");
-    }
+            System.out.print("Entrez le taux horaire de cette main-d'œuvre (€/h) : ");
+            double tauxHoraire = scanner.nextDouble();
 
-    private double getDoubleInput(String prompt) {
-        double input = -1;
-        while (input < 0) {
-            try {
-                System.out.print(prompt);
-                input = scanner.nextDouble();
-                if (input < 0) {
-                    System.out.println("La valeur ne peut pas être négative. Veuillez réessayer.");
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Entrée invalide. Veuillez entrer un nombre valide.");
-                scanner.next();  // Clear the invalid input
-            }
+            System.out.print("Entrez le nombre d'heures travaillées : ");
+            double heuresTravail = scanner.nextDouble();
+
+            System.out.print("Entrez le facteur de productivité (1.0 = standard, > 1.0 = haute productivité) : ");
+            double productiviteOuvrier = scanner.nextDouble();
+            scanner.nextLine(); // To consume the newline character
+
+            MainDoeuvre mainDoeuvre = new MainDoeuvre(0, name, typeComposant, tauxTVA, tauxHoraire, heuresTravail, productiviteOuvrier);
+
+            mainDoeuvreInterface.add(mainDoeuvre, projectId);
+            System.out.println("Main-d'œuvre ajoutée avec succès !");
+
+            // Ask if they want to add more labor
+            System.out.print("Voulez-vous ajouter un autre type de main-d'œuvre ? (y/n) : ");
+            addMore = scanner.nextLine();
         }
-        return input;
-    }
 
-    public void getLaborById() {
-        System.out.print("Entrez l'ID de la main-d'œuvre : ");
-        int laborId = scanner.nextInt();
-        MainDoeuvre labor = mainDoeuvreRepository.findById(laborId);
-
-        if (labor != null) {
-            System.out.println("Détails de la main-d'œuvre : " + labor);
-        } else {
-            System.out.println("Main-d'œuvre non trouvée.");
-        }
+        System.out.println("Ajout de main-d'œuvre terminé.");
     }
 
     public void getAllLaborForProject(int projectId) {
-        List<MainDoeuvre> laborList = mainDoeuvreRepository.findByProjectId(projectId);
+        List<MainDoeuvre> laborList = mainDoeuvreInterface.findByProjectId(projectId);
 
         if (!laborList.isEmpty()) {
             System.out.println("--- Liste des main-d'œuvre pour le projet ID: " + projectId + " ---");
@@ -75,20 +62,5 @@ public class MainDoeuvreService {
         } else {
             System.out.println("Aucune main-d'œuvre trouvée pour ce projet.");
         }
-    }
-
-    public static void main(String[] args) {
-        MainDoeuvreRepository mainDoeuvreRepository = new MainDoeuvreRepository();
-        MainDoeuvreService mainDoeuvreService = new MainDoeuvreService(mainDoeuvreRepository);
-
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Entrez l'ID du projet : ");
-        int projectId = scanner.nextInt();
-        scanner.nextLine();  // Consume the newline character after nextInt()
-
-        mainDoeuvreService.addLabor(projectId);
-        mainDoeuvreService.getAllLaborForProject(projectId);
-        mainDoeuvreService.getLaborById();
     }
 }

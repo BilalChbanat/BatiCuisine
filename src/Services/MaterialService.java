@@ -39,8 +39,7 @@ public class MaterialService {
                 System.out.print("Entrez le coefficient de qualité du matériau (1.0 = standard, > 1.0 = haute qualité) : ");
                 double qualityCoefficient = getValidDoubleInput();
 
-                System.out.print("Entrez le type de composant (e.g., Material, Labor) : ");
-                String typeComposant = scanner.nextLine();
+                String typeComposant = "Material";
 
                 System.out.print("Entrez le taux de TVA (ex: 20 pour 20%) : ");
                 double tauxTVA = getValidDoubleInput();

@@ -2,10 +2,12 @@ package Services;
 
 import Enums.ProjectStatus;
 import Interfaces.ClientInterface;
+import Interfaces.MaterialInterface;
 import Interfaces.ProjectInterface;
 import Models.Client;
 import Models.Project;
 import Repositories.ClientRepository;
+import Repositories.MaterialRepository;
 import Repositories.ProjectRepository;
 import Views.ClientMenu;
 
@@ -14,15 +16,16 @@ import java.util.Optional;
 import java.util.Scanner;
 
 public class ProjectService {
-    private final ProjectInterface projectRepository;
+    private final ProjectInterface projectInterface;
     private final ClientInterface clientRepository;
     private final Scanner scanner;
     ClientMenu clientmenu = new ClientMenu();
     MaterialService materialService = new MaterialService();
+    MainDoeuvreService mainDoeuvreService = new MainDoeuvreService();
 
 
     public ProjectService(ProjectInterface projectRepository, ClientInterface clientRepository) {
-        this.projectRepository = projectRepository;
+        this.projectInterface = new ProjectRepository();
         this.clientRepository = clientRepository;
         this.scanner = new Scanner(System.in);
     }
@@ -90,9 +93,11 @@ public class ProjectService {
             ProjectStatus projectStatus = ProjectStatus.valueOf(statusInput.toUpperCase());
 
             Project project = new Project(0, projectName, surfaceArea, 0.0, projectStatus, client.getId());
-            projectRepository.createProject(project);
+            projectInterface.createProject(project);
 
             materialService.addMaterials(project);
+
+            mainDoeuvreService.addLabor(project.getId());
 
 
             System.out.println("Projet créé avec succès pour le client : " + client.getName());
@@ -148,7 +153,7 @@ public class ProjectService {
     }
 
     private void viewAllProjects() {
-        List<Project> projects = projectRepository.getAllProjects();
+        List<Project> projects = projectInterface.getAllProjects();
         if (projects.isEmpty()) {
             System.out.println("Aucun projet trouvé.");
         } else {
