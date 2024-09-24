@@ -10,7 +10,7 @@ import java.util.List;
 
 public class MainDoeuvreRepository implements MainDoeuvreInterface {
 
-    private Connection connection;
+    private final Connection connection;
 
     public MainDoeuvreRepository() {
         this.connection = DatabaseConnection.getConnection();
@@ -18,10 +18,10 @@ public class MainDoeuvreRepository implements MainDoeuvreInterface {
 
     @Override
     public void add(MainDoeuvre mainDoeuvre, int projectId) {
-        String query = "INSERT INTO maindoeuvre (name, typeComposant, tauxTva, tauxHoraire, heuresTravail, productiviteOuvrier, project_id) " +
+        String query = "INSERT INTO maindoeuvre (name, typeComposant, tauxTva, tauxHoraire, heuresTravail, productuviteouvrier, project_id) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
         try (PreparedStatement statement = connection.prepareStatement(query)) {
-            // Set the values from MainDoeuvre and inherited fields
             statement.setString(1, mainDoeuvre.getName());
             statement.setString(2, mainDoeuvre.getTypeComposant());
             statement.setDouble(3, mainDoeuvre.getTauxTVA());
@@ -43,21 +43,20 @@ public class MainDoeuvreRepository implements MainDoeuvreInterface {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                MainDoeuvre mainDoeuvre = new MainDoeuvre(
+                return new MainDoeuvre(
                         resultSet.getInt("id"),
                         resultSet.getString("name"),
-                        resultSet.getString("typeComposant"),
-                        resultSet.getDouble("tauxTva")
+                        resultSet.getString("typecomposant"),
+                        resultSet.getDouble("tauxtva"),
+                        resultSet.getDouble("tauxhoraire"),
+                        resultSet.getDouble("heurestravail"),
+                        resultSet.getDouble("productuviteouvrier")
                 );
-                mainDoeuvre.setTauxHoraire(resultSet.getDouble("tauxHoraire"));
-                mainDoeuvre.setHeuresTravail(resultSet.getDouble("heuresTravail"));
-                mainDoeuvre.setProductiviteOuvrier(resultSet.getDouble("productiviteOuvrier"));
-                return mainDoeuvre;
             }
         } catch (SQLException e) {
             System.err.println("Error while retrieving main-d'œuvre by ID: " + e.getMessage());
         }
-        return null;  // Return null if not found
+        return null;
     }
 
     @Override
@@ -72,17 +71,17 @@ public class MainDoeuvreRepository implements MainDoeuvreInterface {
                 MainDoeuvre mainDoeuvre = new MainDoeuvre(
                         resultSet.getInt("id"),
                         resultSet.getString("name"),
-                        resultSet.getString("typeComposant"),
-                        resultSet.getDouble("tauxTva")
+                        resultSet.getString("typecomposant"),
+                        resultSet.getDouble("tauxtva"),
+                        resultSet.getDouble("tauxhoraire"),
+                        resultSet.getDouble("heurestravail"),
+                        resultSet.getDouble("productuviteouvrier")
                 );
-                mainDoeuvre.setTauxHoraire(resultSet.getDouble("tauxHoraire"));
-                mainDoeuvre.setHeuresTravail(resultSet.getDouble("heuresTravail"));
-                mainDoeuvre.setProductiviteOuvrier(resultSet.getDouble("productiviteOuvrier"));
                 laborList.add(mainDoeuvre);
             }
         } catch (SQLException e) {
             System.err.println("Error while retrieving labor list by project ID: " + e.getMessage());
         }
-        return laborList;  // Return list of labor associated with the project
+        return laborList;
     }
 }

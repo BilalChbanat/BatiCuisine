@@ -72,9 +72,9 @@ public class MaterialService {
         }
     }
 
-    public static void main(String[] args) {
-        MaterialService materialService = new MaterialService();
-//        materialService.addMaterials();
-        materialService.scanner.close();
-    }
+//    public static void main(String[] args) {
+//        MaterialService materialService = new MaterialService();
+////        materialService.addMaterials();
+//        materialService.scanner.close();
+//    }
 }
