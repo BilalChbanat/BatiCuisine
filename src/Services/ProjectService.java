@@ -19,14 +19,22 @@ public class ProjectService {
     private final ProjectInterface projectInterface;
     private final ClientInterface clientRepository;
     private final Scanner scanner;
+    private final DevisService devisService;
+
     ClientMenu clientmenu = new ClientMenu();
     MaterialService materialService = new MaterialService();
     MainDoeuvreService mainDoeuvreService = new MainDoeuvreService();
 
 
-    public ProjectService(ProjectInterface projectRepository, ClientInterface clientRepository) {
-        this.projectInterface = new ProjectRepository();
+
+    public ProjectService(ProjectInterface projectRepository, ClientInterface clientRepository,
+                          MaterialService materialService, MainDoeuvreService mainDoeuvreService,
+                          DevisService devisService) {
+        this.projectInterface = projectRepository;
         this.clientRepository = clientRepository;
+        this.materialService = materialService;
+        this.mainDoeuvreService = mainDoeuvreService;
+        this.devisService = devisService;
         this.scanner = new Scanner(System.in);
     }
 
@@ -100,6 +108,7 @@ public class ProjectService {
             mainDoeuvreService.addLabor(project.getId());
 
 
+
             System.out.println("Projet créé avec succès pour le client : " + client.getName());
         } else {
             System.out.println("Aucun client sélectionné. Projet non créé.");
@@ -107,6 +116,7 @@ public class ProjectService {
     }
 
     private Client searchExistingClient() {
+
         System.out.print("Entrez le nom du client : ");
         String clientName = scanner.nextLine();
         Optional<Client> clientOptional = clientRepository.getClientByName(clientName);
@@ -148,10 +158,6 @@ public class ProjectService {
         return newClient;
     }
 
-    private void addMaterialsToProject(Project project, double tax) {
-
-    }
-
     private void viewAllProjects() {
         List<Project> projects = projectInterface.getAllProjects();
         if (projects.isEmpty()) {
@@ -164,24 +170,11 @@ public class ProjectService {
         }
     }
 
+//    public static void main(String[] args) {
+//        ClientInterface clientRepository = new ClientRepository();
+//        ProjectInterface projectRepository = new ProjectRepository();
+//        ProjectService projectService = new ProjectService(projectRepository, clientRepository);
+//        projectService.displayMenu();
+//    }
 
-    public static void main(String[] args) {
-        ClientInterface clientRepository = new ClientRepository();
-        ProjectInterface projectRepository = new ProjectRepository();
-        ProjectService projectService = new ProjectService(projectRepository, clientRepository);
-        projectService.displayMenu();
-    }
-
-    public double applyTax() {
-        System.out.println("Do you want apply tax for this project (1 for yes | 2 for no)");
-        int choice = scanner.nextInt();
-        scanner.nextLine();
-        double tax = 0;
-        if (choice == 1) {
-            System.out.println("Please Entre Tax (ex 20 %): ");
-             tax = scanner.nextDouble();
-        }
-
-        return tax;
-    }
 }

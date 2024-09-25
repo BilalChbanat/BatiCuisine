@@ -40,6 +40,17 @@ public class ProjectRepository implements ProjectInterface {
         }
     }
 
+    public void updateProjectStatus(int projectId, ProjectStatus status) {
+        String sql = "UPDATE projects SET project_status = ? WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, status.name());
+            stmt.setInt(2, projectId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error updating project status: " + e.getMessage());
+        }
+    }
+
 
     private int fetchClientId(Client client) {
         String query = "SELECT id FROM clients WHERE name = ?";

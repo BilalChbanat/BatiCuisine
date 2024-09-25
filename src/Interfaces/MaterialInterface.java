@@ -9,4 +9,6 @@ public interface MaterialInterface {
     void addMaterial(Material material);
     List<Material> getAllMaterials();
     Optional<Material> getMaterialByName(String name);
+    List<Material> findMaterialProject(int choice);
+
 }

@@ -116,7 +116,7 @@ public class MaterialRepository implements MaterialInterface {
         }
     }
 
-    // Optional: Implement deleteMaterial method
+
     public void deleteMaterial(int materialId) {
         String query = "DELETE FROM materials WHERE id = ?";
 
@@ -127,5 +127,34 @@ public class MaterialRepository implements MaterialInterface {
         } catch (SQLException e) {
             System.err.println("Error deleting material: " + e.getMessage());
         }
+    }
+
+    public List<Material> findMaterialProject(int projectId) {
+        List<Material> materials = new ArrayList<>();
+        String query = "SELECT * FROM materials WHERE project_id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, projectId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Material material = new Material(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getString("typeComposant"),
+                            rs.getDouble("tauxTVA"),
+                            rs.getDouble("quantite"),
+                            rs.getDouble("coutUnitaire"),
+                            rs.getDouble("coutTransport"),
+                            rs.getDouble("coefficientQualite"),
+                            rs.getInt("project_id")
+                    );
+                    materials.add(material);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving materials for project ID " + projectId + ": " + e.getMessage());
+        }
+
+        return materials;
     }
 }

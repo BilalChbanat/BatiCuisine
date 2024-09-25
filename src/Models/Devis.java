@@ -3,17 +3,20 @@ package Models;
 import java.time.LocalDate;
 
 public class Devis {
-
     private int id;
     private double montantEstime;
-    private LocalDate dateValidite;
+    private LocalDate dateEmission;
     private boolean accepte;
+    private LocalDate dateValide;
+    private int projectId;
 
-    public Devis(int id, double montantEstime, LocalDate dateValidite, boolean accepte) {
+    public Devis(int id, double montantEstime, LocalDate dateEmission, boolean accepte, LocalDate dateValide, int projectId) {
         this.id = id;
-        this.montantEstime = montantEstime;
-        this.dateValidite = dateValidite;
+        this.setMontantEstime(montantEstime);
+        this.dateEmission = dateEmission;
         this.accepte = accepte;
+        this.dateValide = dateValide;
+        this.projectId = projectId;
     }
 
     public int getId() {
@@ -29,18 +32,18 @@ public class Devis {
     }
 
     public void setMontantEstime(double montantEstime) {
-        if(montantEstime < 0) {
+        if (montantEstime < 0) {
             throw new IllegalArgumentException("Montant estimé ne peut pas être négatif.");
         }
         this.montantEstime = montantEstime;
     }
 
-    public LocalDate getDateValidite() {
-        return dateValidite;
+    public LocalDate getDateEmission() {
+        return dateEmission;
     }
 
-    public void setDateValidite(LocalDate dateValidite) {
-        this.dateValidite = dateValidite;
+    public void setDateEmission(LocalDate dateEmission) {
+        this.dateEmission = dateEmission;
     }
 
     public boolean isAccepte() {
@@ -51,13 +54,22 @@ public class Devis {
         this.accepte = accepte;
     }
 
-    @Override
-    public String toString() {
-        return "Devis{" +
-                "id=" + id +
-                ", montantEstime=" + montantEstime +
-                ", dateValidite=" + dateValidite +
-                ", accepte=" + accepte +
-                '}';
+    public LocalDate getDateValide() {
+        return dateValide;
+    }
+
+    public void setDateValide(LocalDate dateValide) {
+        if (dateValide != null && dateEmission != null && dateValide.isBefore(dateEmission)) {
+            throw new IllegalArgumentException("La date de validité doit être postérieure à la date d'émission.");
+        }
+        this.dateValide = dateValide;
+    }
+
+    public int getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
     }
 }
