@@ -190,13 +190,13 @@ public class DevisService {
         System.out.println("Devis deleted successfully.");
     }
 
-    public static void main(String[] args) {
-        try (Connection connection = Database.DatabaseConnection.getConnection()) {
-            DevisInterface devisRepository = new Repositories.DevisRepository(connection);
-            DevisService devisService = new DevisService(devisRepository);
-            devisService.displayMenu();
-        } catch (SQLException e) {
-            System.out.println("Error connecting to the database: " + e.getMessage());
-        }
-    }
+//    public static void main(String[] args) {
+//        try (Connection connection = Database.DatabaseConnection.getConnection()) {
+//            DevisInterface devisRepository = new Repositories.DevisRepository(connection);
+//            DevisService devisService = new DevisService(devisRepository);
+//            devisService.displayMenu();
+//        } catch (SQLException e) {
+//            System.out.println("Error connecting to the database: " + e.getMessage());
+//        }
+//    }
 }
