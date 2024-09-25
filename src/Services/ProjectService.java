@@ -58,7 +58,7 @@ public class ProjectService {
                     viewAllProjects();
                     break;
                 case 3:
-//                    calculateProjectCost();
+                    devisManagment();
                     break;
                 case 4:
                     System.out.println("Au revoir !");
@@ -67,6 +67,10 @@ public class ProjectService {
                     System.out.println("Choix invalide. Veuillez réessayer.");
             }
         }
+    }
+
+    private void devisManagment() {
+        devisService.displayMenu();
     }
 
     private void createProject() {
